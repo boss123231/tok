@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TOKA DIBAKOANE - Crypto Rent & Gold Trading</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#0d1117;
+      color:white;
+    }
+
+    header{
+      background:#161b22;
+      padding:20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:2px solid #f0b90b;
+    }
+
+    header h1{
+      color:#f0b90b;
+      font-size:24px;
+    }
+
+    .top-info{
+      text-align:right;
+    }
+
+    .balance{
+      color:#00ff88;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    nav{
+      display:flex;
+      justify-content:center;
+      background:#1f2937;
+      padding:10px;
+      gap:15px;
+    }
+
+    nav button{
+      background:#f0b90b;
+      border:none;
+      padding:12px 20px;
+      cursor:pointer;
+      border-radius:8px;
+      font-weight:bold;
+      transition:0.3s;
+    }
+
+    nav button:hover{
+      background:#ffcc00;
+      transform:scale(1.05);
+    }
+
+    .container{
+      padding:20px;
+    }
+
+    .card{
+      background:#161b22;
+      padding:20px;
+      border-radius:12px;
+      margin-bottom:20px;
+      box-shadow:0 0 10px rgba(0,0,0,0.5);
+    }
+
+    input, select{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      margin-bottom:15px;
+      border:none;
+      border-radius:8px;
+      background:#0d1117;
+      color:white;
+      border:1px solid #333;
+    }
+
+    .btn{
+      background:#f0b90b;
+      color:black;
+      border:none;
+      padding:12px;
+      width:100%;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .btn:hover{
+      background:#ffcc00;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    table th, table td{
+      border:1px solid #333;
+      padding:10px;
+      text-align:center;
+    }
+
+    table th{
+      background:#222;
+      color:#f0b90b;
+    }
+
+    .trade-result{
+      margin-top:15px;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    .profit{
+      color:#00ff88;
+    }
+
+    .loss{
+      color:#ff4d4d;
+    }
+
+    .hidden{
+      display:none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Welcome to TOKA DIBAKOANE</h1>
+      <p>Bitcoin Style Rent & Gold Trading Platform</p>
+    </div>
+
+    <div class="top-info">
+      <p>Account: <span id="accountType">Demo Account</span></p>
+      <p class="balance">Balance: R<span id="balance">10000</span></p>
+    </div>
+  </header>
+
+  <nav>
+    <button onclick="showSection('rentSection')">Rent Payments</button>
+    <button onclick="showSection('tradeSection')">Trade Gold</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- RENT SECTION -->
+    <div id="rentSection">
+
+      <div class="card">
+        <h2>Send Rent Payment</h2>
+
+        <input type="text" id="receiver" placeholder="Landlord Name">
+        <input type="number" id="rentAmount" placeholder="Enter Amount">
+
+        <button class="btn" onclick="sendRent()">Send Money</button>
+      </div>
+
+      <div class="card">
+        <h2>Payment Transaction History</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Receiver</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody id="historyTable">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- TRADE SECTION -->
+    <div id="tradeSection" class="hidden">
+
+      <div class="card">
+        <h2>Gold Trading</h2>
+
+        <select id="accountSelect" onchange="changeAccount()">
+          <option>Demo Account</option>
+          <option>Real Account</option>
+        </select>
+
+        <input type="number" id="tradeAmount" placeholder="Enter Trade Amount">
+
+        <button class="btn" onclick="tradeGold()">Place Gold Trade</button>
+
+        <div id="tradeResult" class="trade-result"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let balance = 10000;
+
+    function updateBalance(){
+      document.getElementById("balance").innerText = balance.toFixed(2);
+    }
+
+    function showSection(sectionId){
+
+      document.getElementById("rentSection").classList.add("hidden");
+      document.getElementById("tradeSection").classList.add("hidden");
+
+      document.getElementById(sectionId).classList.remove("hidden");
+    }
+
+    function sendRent(){
+
+      const receiver = document.getElementById("receiver").value;
+      const amount = parseFloat(document.getElementById("rentAmount").value);
+
+      if(receiver === "" || isNaN(amount) || amount <= 0){
+        alert("Please enter valid details.");
+        return;
+      }
+
+      if(amount > balance){
+        alert("Insufficient balance.");
+        return;
+      }
+
+      balance -= amount;
+      updateBalance();
+
+      const table = document.getElementById("historyTable");
+
+      const row = `
+        <tr>
+          <td>${new Date().toLocaleString()}</td>
+          <td>${receiver}</td>
+          <td>R${amount.toFixed(2)}</td>
+          <td style="color:lime;">Successful</td>
+        </tr>
+      `;
+
+      table.innerHTML += row;
+
+      alert("Rent payment sent successfully!");
+
+      document.getElementById("receiver").value = "";
+      document.getElementById("rentAmount").value = "";
+    }
+
+    function changeAccount(){
+      const account = document.getElementById("accountSelect").value;
+      document.getElementById("accountType").innerText = account;
+    }
+
+    function tradeGold(){
+
+      const amount = parseFloat(document.getElementById("tradeAmount").value);
+
+      if(isNaN(amount) || amount <= 0){
+        alert("Enter a valid trade amount.");
+        return;
+      }
+
+      if(amount > balance){
+        alert("Insufficient balance.");
+        return;
+      }
+
+      const resultArea = document.getElementById("tradeResult");
+
+      // 70% WINNING CHANCE
+      const random = Math.random();
+
+      if(random <= 0.7){
+
+        const profit = amount * 0.70;
+
+        balance += profit;
+
+        resultArea.innerHTML = `
+          <span class="profit">
+            WIN! You earned R${profit.toFixed(2)}
+          </span>
+        `;
+
+      } else {
+
+        const loss = amount * 0.30;
+
+        balance -= loss;
+
+        resultArea.innerHTML = `
+          <span class="loss">
+            LOSS! You lost R${loss.toFixed(2)}
+          </span>
+        `;
+      }
+
+      updateBalance();
+
+      document.getElementById("tradeAmount").value = "";
+    }
+
+    updateBalance();
+  </script>
+
+</body>
+</html>
